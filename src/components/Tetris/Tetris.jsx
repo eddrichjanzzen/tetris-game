@@ -9,15 +9,18 @@ import StartButton from '../StartButton/StartButton';
 
 import usePlayer from '../../hooks/usePlayer';
 import useStage from '../../hooks/useStage';
+import useInterval from '../../hooks/useInterval';
+import useGameStatus from '../../hooks/useGameStatus';
 
 const Tetris = () => {
   const [dropTime, setDropTime] = useState(null);
   const [gameOver, setGameOver] = useState(false);
 
-  const [player, updatePlayerPosition, resetPlayer] = usePlayer();
-  const [stage, setStage] = useStage(player, resetPlayer);
+  const [player, updatePlayerPosition, resetPlayer, rotatePlayer] = usePlayer();
+  const [stage, setStage, rowsCleared] = useStage(player, resetPlayer);
+  const [score, setScore, rows, setRows, level, setLevel] = useGameStatus(rowsCleared);
 
-  console.log('re-render');
+  const levelSpeed = 1000 / (level + 1) + 200;
 
   const movePlayer = (direction) => {
     if (!checkCollision(player, stage, { x: direction, y: 0 })) {
@@ -31,10 +34,29 @@ const Tetris = () => {
 
   const startGame = () => {
     setStage(createStage());
+    setDropTime(1000);
     resetPlayer();
+    setGameOver(false);
+    setScore(0);
+    setRows(0);
+    setLevel(0);
+  };
+
+  const hardDrop = () => {
+    let pot = 0;
+    while (!checkCollision(player, stage, { x: 0, y: pot })) {
+      pot += 1;
+    }
+    updatePlayerPosition({ x: 0, y: pot - 1, collided: true });
   };
 
   const drop = () => {
+    // increase level when player cleared 10 rows
+    if (rows > (level + 1 * 10)) {
+      setLevel((prev) => prev + 1);
+      setDropTime(levelSpeed);
+    }
+
     if (!checkCollision(player, stage, { x: 0, y: 1 })) {
       updatePlayerPosition({
         x: 0,
@@ -43,7 +65,6 @@ const Tetris = () => {
       });
     } else {
       if (player.pos.y < 1) {
-        console.log('GAME OVER');
         setGameOver(true);
         setDropTime(null);
       }
@@ -56,7 +77,18 @@ const Tetris = () => {
     }
   };
 
+  const onKeyUp = ({ keyCode }) => {
+    if (!gameOver) {
+      if (keyCode === 40) {
+        setDropTime(levelSpeed);
+      } else if (keyCode === 32) {
+        setDropTime(levelSpeed);
+      }
+    }
+  };
+
   const dropPlayer = () => {
+    setDropTime(null);
     drop();
   };
 
@@ -68,15 +100,24 @@ const Tetris = () => {
         movePlayer(1);
       } else if (keyCode === 40) {
         dropPlayer();
+      } else if (keyCode === 38) {
+        rotatePlayer(stage, 1);
+      } else if (keyCode === 32) {
+        hardDrop();
       }
     }
   };
+
+  useInterval(() => {
+    drop();
+  }, dropTime);
 
   return (
     <StyledTetrisWrapper
       role="button"
       tabIndex="0"
-      onKeyDown={(e) => onMove(e)}
+      onKeyDown={onMove}
+      onKeyUp={onKeyUp}
     >
       <StyledTetris>
         <Stage stage={stage} />
@@ -89,9 +130,9 @@ const Tetris = () => {
           )
             : (
               <div>
-                <Display text="Score" />
-                <Display text="Rows" />
-                <Display text="Level" />
+                <Display text={`Score ${score}`} />
+                <Display text={`Rows ${rows}`} />
+                <Display text={`Level ${level}`} />
               </div>
             )}
           <StartButton callback={startGame} />
