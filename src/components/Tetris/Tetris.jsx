@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { StyledTetrisWrapper, StyledTetris } from './Tetris.styles';
 import { createStage, checkCollision } from '../../gameHelpers';
@@ -32,6 +32,18 @@ const Tetris = () => {
     }
   };
 
+  const increaseLevel = () => {
+    // increase level when player cleared 10 rows
+    if (rows > (level + 1 * 10)) {
+      setLevel((prev) => prev + 1);
+      setDropTime(levelSpeed);
+    }
+  };
+
+  useEffect(() => {
+    increaseLevel();
+  }, [rows]);
+
   const startGame = () => {
     setStage(createStage());
     setDropTime(1000);
@@ -51,24 +63,16 @@ const Tetris = () => {
   };
 
   const drop = () => {
-    // increase level when player cleared 10 rows
-    if (rows > (level + 1 * 10)) {
-      setLevel((prev) => prev + 1);
-      setDropTime(levelSpeed);
-    }
-
     if (!checkCollision(player, stage, { x: 0, y: 1 })) {
       updatePlayerPosition({
         x: 0,
         y: 1,
         collided: false,
       });
+    } else if (player.pos.y < 1) {
+      setGameOver(true);
+      setDropTime(null);
     } else {
-      if (player.pos.y < 1) {
-        setGameOver(true);
-        setDropTime(null);
-      }
-
       updatePlayerPosition({
         x: 0,
         y: 0,
@@ -130,9 +134,9 @@ const Tetris = () => {
           )
             : (
               <div>
-                <Display text={`Score ${score}`} />
-                <Display text={`Rows ${rows}`} />
-                <Display text={`Level ${level}`} />
+                <Display text={`Score: ${score}`} />
+                <Display text={`Rows: ${rows}`} />
+                <Display text={`Level: ${level}`} />
               </div>
             )}
           <StartButton callback={startGame} />
