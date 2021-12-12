@@ -106,6 +106,8 @@ const Tetris = () => {
         dropPlayer();
       } else if (keyCode === 38) {
         rotatePlayer(stage, 1);
+      } else if (keyCode === 90) {
+        rotatePlayer(stage, -1);
       } else if (keyCode === 32) {
         hardDrop();
       }
