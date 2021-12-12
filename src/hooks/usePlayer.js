@@ -20,18 +20,18 @@ const usePlayer = () => {
     return rotatedTetro.reverse();
   };
 
-  const rotatePlayer = (stage, direction) => {
+  const rotatePlayer = (stage, dir) => {
     const clonedPlayer = JSON.parse(JSON.stringify(player));
-    clonedPlayer.tetromino = rotate(clonedPlayer.tetromino, direction);
+    clonedPlayer.tetromino = rotate(clonedPlayer.tetromino, dir);
 
-    const position = clonedPlayer.pos.x;
+    const pos = clonedPlayer.pos.x;
     let offset = 1;
     while (checkCollision(clonedPlayer, stage, { x: 0, y: 0 })) {
       clonedPlayer.pos.x += offset;
-      offset = -(offset + (offset) > 0 ? 1 : -1);
+      offset = -(offset + (offset > 0 ? 1 : -1));
       if (offset > clonedPlayer.tetromino[0].length) {
-        rotate(clonedPlayer.tetromino, -direction);
-        clonedPlayer.pos.x = position;
+        rotate(clonedPlayer.tetromino, -dir);
+        clonedPlayer.pos.x = pos;
         return;
       }
     }
