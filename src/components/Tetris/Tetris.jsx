@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
 import { StyledTetrisWrapper, StyledTetris } from './Tetris.styles';
-import { createStage, checkCollision } from '../../gameHelpers';
+import { createStage, createViewBox, checkCollision } from '../../gameHelpers';
 
 import Stage from '../Stage/Stage';
 import Display from '../Display/Display';
 import StartButton from '../StartButton/StartButton';
+import ViewBox from '../ViewBox/ViewBox';
 
 import usePlayer from '../../hooks/usePlayer';
 import useStage from '../../hooks/useStage';
@@ -128,6 +129,10 @@ const Tetris = () => {
       <StyledTetris>
         <Stage stage={stage} />
         <aside>
+          <ViewBox
+            grid={createViewBox()}
+            tetromino={player.nextTetro}
+          />
           {gameOver ? (
             <Display
               gameOver={gameOver}
@@ -135,11 +140,11 @@ const Tetris = () => {
             />
           )
             : (
-              <div>
+              <>
                 <Display text={`Score: ${score}`} />
                 <Display text={`Rows: ${rows}`} />
                 <Display text={`Level: ${level}`} />
-              </div>
+              </>
             )}
           <StartButton callback={startGame} />
         </aside>
