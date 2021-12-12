@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { createStage } from '../gameHelpers';
+import { createStage, createViewBox } from '../gameHelpers';
 
 const useStage = (player, resetPlayer) => {
   const [stage, setStage] = useState(createStage());
+  const [nextTetro, setNextTetro] = useState(createViewBox());
   const [rowsCleared, setRowsCleared] = useState(0);
 
   useEffect(() => {
@@ -42,10 +43,26 @@ const useStage = (player, resetPlayer) => {
       return newStage;
     };
 
+    const updateNextTetro = (prevTetro) => {
+      const newNextTetro = prevTetro;
+      // const newStage = prevTetro.map((row) => row.map(() => 0));
+
+      player.nextTetro.forEach((row, y) => {
+        row.forEach((value, x) => {
+          if (value !== 0) {
+            // eslint-disable-next-line no-param-reassign
+            newNextTetro[y][x] = value;
+          }
+        });
+      });
+
+      return newNextTetro;
+    };
+    setNextTetro((prev) => updateNextTetro(prev));
     setStage((prev) => updateStage(prev));
   }, [player, resetPlayer]);
 
-  return [stage, setStage, rowsCleared];
+  return [stage, setStage, nextTetro, setNextTetro, rowsCleared];
 };
 
 export default useStage;
