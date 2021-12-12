@@ -34,7 +34,7 @@ const Tetris = () => {
 
   const increaseLevel = () => {
     // increase level when player cleared 10 rows
-    if (rows > (level + 1 * 10)) {
+    if (rows >= level * 10) {
       setLevel((prev) => prev + 1);
       setDropTime(levelSpeed);
     }
@@ -48,10 +48,10 @@ const Tetris = () => {
     setStage(createStage());
     setDropTime(1000);
     resetPlayer();
-    setGameOver(false);
     setScore(0);
     setRows(0);
-    setLevel(0);
+    setLevel(1);
+    setGameOver(false);
   };
 
   const hardDrop = () => {
