@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import { StyledTetrisWrapper, StyledTetris } from './Tetris.styles';
-import { createStage, createViewBox, checkCollision } from '../../gameHelpers';
+import { createStage, createNextTetro, checkCollision } from '../../gameHelpers';
 
 import Stage from '../Stage/Stage';
 import Display from '../Display/Display';
@@ -11,6 +11,7 @@ import ViewBox from '../ViewBox/ViewBox';
 import usePlayer from '../../hooks/usePlayer';
 import useStage from '../../hooks/useStage';
 import useInterval from '../../hooks/useInterval';
+import useNextTetro from '../../hooks/useNextTetro';
 import useGameStatus from '../../hooks/useGameStatus';
 
 const Tetris = () => {
@@ -19,6 +20,7 @@ const Tetris = () => {
 
   const [player, updatePlayerPosition, resetPlayer, rotatePlayer] = usePlayer();
   const [stage, setStage, rowsCleared] = useStage(player, resetPlayer);
+  const [nextTetro, setNextTetro] = useNextTetro(player, resetPlayer);
   const [score, setScore, rows, setRows, level, setLevel] = useGameStatus(rowsCleared);
 
   const levelSpeed = 1000 / (level + 1) + 200;
@@ -47,6 +49,7 @@ const Tetris = () => {
 
   const startGame = () => {
     setStage(createStage());
+    setNextTetro(createNextTetro());
     setDropTime(1000);
     resetPlayer();
     setScore(0);
@@ -130,7 +133,7 @@ const Tetris = () => {
         <Stage stage={stage} />
         <aside>
           <ViewBox
-            grid={createViewBox()}
+            nextTetro={nextTetro}
             tetromino={player.nextTetro}
           />
           {gameOver ? (
