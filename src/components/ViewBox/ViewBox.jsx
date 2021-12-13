@@ -3,14 +3,14 @@ import React from 'react';
 import { StyledViewBox, StyledTetrominoGrid } from './ViewBox.styles';
 import Cell from '../Cell/Cell';
 
-const ViewBox = ({ grid }) => (
+const ViewBox = ({ nextTetro }) => (
   <StyledViewBox>
     <StyledTetrominoGrid
-      grid={grid}
-      width={grid[0].length}
-      height={grid.length}
+      nextTetro={nextTetro}
+      width={nextTetro[0].length}
+      height={nextTetro.length}
     >
-      {grid.map((row) => row.map((cell, x) => <Cell key={x} type={cell} />))}
+      {nextTetro.map((row) => row.map((cell, x) => <Cell key={x} type={cell} />))}
     </StyledTetrominoGrid>
   </StyledViewBox>
 );
