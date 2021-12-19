@@ -7,6 +7,7 @@ import Stage from '../Stage/Stage';
 import Display from '../Display/Display';
 import StartButton from '../StartButton/StartButton';
 import ViewBox from '../ViewBox/ViewBox';
+import PlayPauseButton from '../PlayPauseButton/PlayPauseButton';
 
 import usePlayer from '../../hooks/usePlayer';
 import useStage from '../../hooks/useStage';
@@ -150,6 +151,7 @@ const Tetris = () => {
               </>
             )}
           <StartButton callback={startGame} />
+          <PlayPauseButton isPlaying />
         </aside>
       </StyledTetris>
     </StyledTetrisWrapper>
