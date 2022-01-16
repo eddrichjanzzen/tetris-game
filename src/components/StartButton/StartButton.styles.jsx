@@ -4,6 +4,7 @@ const StyledStartButton = styled.div`
   box-sizing: border-box; 
   padding: 20px;
   min-height: 30px;
+  text-align: center;
   width: 100%;
   border: none;
   color: white;
