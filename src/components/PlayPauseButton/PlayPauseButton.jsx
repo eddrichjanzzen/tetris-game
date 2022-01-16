@@ -4,7 +4,7 @@ import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 import StyledPlayPauseButton from './PlayPauseButton.styles';
 
 const PlayPauseButton = ({ onClick, isPlaying }) => (
-  <StyledPlayPauseButton>
+  <StyledPlayPauseButton onClick={onClick}>
     {isPlaying ? 'Play' : ' Pause'}
     <FontAwesomeIcon
       icon={isPlaying ? faPlay : faPause}

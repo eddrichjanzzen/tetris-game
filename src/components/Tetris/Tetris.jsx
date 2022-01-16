@@ -18,6 +18,7 @@ import useGameStatus from '../../hooks/useGameStatus';
 const Tetris = () => {
   const [dropTime, setDropTime] = useState(null);
   const [gameOver, setGameOver] = useState(false);
+  const [gamePaused, setGamePaused] = useState(true);
 
   const [player, updatePlayerPosition, resetPlayer, rotatePlayer] = usePlayer();
   const [stage, setStage, rowsCleared] = useStage(player, resetPlayer);
@@ -57,6 +58,7 @@ const Tetris = () => {
     setRows(0);
     setLevel(1);
     setGameOver(false);
+    setGamePaused(false);
   };
 
   const hardDrop = () => {
@@ -101,8 +103,12 @@ const Tetris = () => {
     drop();
   };
 
+  const togglePlayPause = () => {
+    setGamePaused((previousState) => (!previousState));
+  };
+
   const onMove = ({ keyCode }) => {
-    if (!gameOver) {
+    if (!gameOver && !gamePaused) {
       if (keyCode === 37) {
         movePlayer(-1);
       } else if (keyCode === 39) {
@@ -120,7 +126,9 @@ const Tetris = () => {
   };
 
   useInterval(() => {
-    drop();
+    if (!gamePaused) {
+      drop();
+    }
   }, dropTime);
 
   return (
@@ -131,7 +139,10 @@ const Tetris = () => {
       onKeyUp={onKeyUp}
     >
       <StyledTetris>
-        <Stage stage={stage} />
+        <Stage
+          stage={stage}
+          isPaused={gamePaused}
+        />
         <aside>
           <ViewBox
             nextTetro={nextTetro}
@@ -151,7 +162,10 @@ const Tetris = () => {
               </>
             )}
           <StartButton callback={startGame} />
-          <PlayPauseButton isPlaying />
+          <PlayPauseButton
+            isPlaying={gamePaused}
+            onClick={togglePlayPause}
+          />
         </aside>
       </StyledTetris>
     </StyledTetrisWrapper>
